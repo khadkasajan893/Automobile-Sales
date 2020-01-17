@@ -1,0 +1,21 @@
+For the interface portion of the project, I used the following resources:
+
+IntelliJ (IDE)
+	JetBrains offers a free license to IntelliJ "Ultimate" to students. In this version exists
+	lots of useful features for databases connections. Using the "Database" tab on the right
+	edge of the screen, a user can connect directly to their various databases. I used this feature
+	to connect to the Oracle database we used, giving me easier access to queries where I could check
+	if updates to the tables were performed, etc.
+
+JavaFX Scene Builder 2.0
+	Scene Builder offers both an IDE integrated (in our case, IntelliJ) and standalone interface options.
+	Using Scene Builder allows a user to drag and drop JavaFXML objects onto the screen, and directly see
+	the effects they apply to the elements without needing to constantly compile. Not only this, but it
+	creates the sample.fxml file for you dynamically as you build the interface.
+
+StackOverflow
+	As countless know, most issues a programmer can run into are already solved on this site, and I referenced
+	it whenever necessary.
+
+OracleDocs
+	For any syntax issues, or imports.

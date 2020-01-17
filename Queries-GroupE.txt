@@ -1,0 +1,124 @@
+Suppose that it is found that manual transmission systems produced between two given dates are defective. 
+Find the VIN of each car containing such a transmission and the customer to which it was sold; 
+the vehicle production date should be in the interval when the defective transmissions were produced. 
+
+SELECT VIN, CUSTOMER_ID, CUSTOMER_NAME
+FROM CAR NATURAL JOIN CUSTOMER
+WHERE (PRODUCTION_DATE BETWEEN '01-JAN-12' AND '31-DEC-12') AND TRANSMISSION='MANUAL';
+
+VIN               CUSTOMER_ID CUSTOMER_NAME                           
+----------------- ----------- ----------------------------------------
+3SFEG591XLC719782        1715 Kieran Bender        
+
+Show sales trends for various brands over the past 3 years, by year, buyer gender, and buyer income range.
+
+WITH TEMP AS (
+    SELECT ANNUAL_INCOME, CASE
+    WHEN ANNUAL_INCOME BETWEEN 0 AND 24999 THEN '0-24999'
+    WHEN ANNUAL_INCOME BETWEEN 25000 AND 49999 THEN '25000-49999'
+    WHEN ANNUAL_INCOME BETWEEN 50000 AND 79999 THEN '50000-79999'
+    WHEN ANNUAL_INCOME BETWEEN 80000 AND 199999 THEN '80000-199999'
+    WHEN ANNUAL_INCOME BETWEEN 200000 AND 399999 THEN '200000-399999'
+    WHEN ANNUAL_INCOME BETWEEN 400000 AND 599999 THEN '400000-599999'
+    WHEN ANNUAL_INCOME BETWEEN 600000 AND 1999999 THEN '600000-1999999'
+    WHEN ANNUAL_INCOME BETWEEN 2000000 AND 10000000 THEN '2000000-10000000'
+    END AS INCOME_BRACKET FROM CUSTOMER NATURAL JOIN VEHICLE NATURAL JOIN MODEL NATURAL JOIN BRAND
+    WHERE (EXTRACT(YEAR FROM (TO_DATE(SOLD_DATE))) >= 2017))
+SELECT BRAND_NAME, GENDER, COUNT(ANNUAL_INCOME) NUMBER_OF_CUSTOMERS, INCOME_BRACKET
+FROM TEMP NATURAL JOIN CUSTOMER NATURAL JOIN VEHICLE NATURAL JOIN MODEL NATURAL JOIN BRAND
+GROUP BY BRAND_NAME, INCOME_BRACKET, GENDER ORDER BY BRAND_NAME ASC;
+
+BRAND_NAME                               GENDER NUMBER_OF_CUSTOMERS INCOME_BRACKET  
+---------------------------------------- ------ ------------------- ----------------
+ACURA                                    F              1 	    80000-199999    
+ALFA ROMEO                               F              1 	    200000-399999   
+AUDI                                     M              1 	    600000-1999999  
+BMW                                      F              1 	    600000-1999999  
+CADILLAC                                 M              1 	    200000-399999   
+CHEVROLET                                F              1 	    600000-1999999  
+DODGE                                    F              2 	    600000-1999999  
+DODGE                                    M              2 	    600000-1999999  
+FORD                                     F              1 	    200000-399999   
+FORD                                     M              1 	    200000-399999   
+FORD                                     F              1 	    600000-1999999  
+HONDA                                    M              1 	    50000-79999     
+MAZDA                                    F              1 	    600000-1999999  
+PORSCHE                                  M              1 	    80000-199999    
+SUZUKI                                   M              1 	    600000-1999999  
+TESLA                                    M              1 	    600000-1999999  
+
+Find the top brand(s) by dollar-amount sold in the past year. 
+
+WITH TOP_BRANDS_BY_SALES AS (
+    SELECT BRAND_NAME, SUM(SOLD_PRICE) sumSold
+    FROM VEHICLE NATURAL JOIN MODEL NATURAL JOIN BRAND
+    WHERE SOLD_PRICE IS NOT NULL
+    GROUP BY BRAND_NAME
+    ORDER BY sumSold DESC)
+SELECT * FROM TOP_BRANDS_BY_SALES WHERE ROWNUM = 1;
+
+BRAND_NAME                                  SUMSOLD
+---------------------------------------- ----------
+DODGE                                        217000
+
+Find the top dealer(s) by dollar-amount sold in the past year. 
+
+WITH TOP_DEALERS AS (
+    SELECT DEALER_NAME, SUM(SOLD_PRICE) AS DEALER_TOTAL_SALES
+    FROM VEHICLE NATURAL JOIN DEALER
+    WHERE SOLD_PRICE IS NOT NULL
+    GROUP BY DEALER_NAME ORDER BY DEALER_TOTAL_SALES DESC)
+SELECT * FROM TOP_DEALERS WHERE ROWNUM = 1;
+
+DEALER_NAME                              DEALER_TOTAL_SALES
+---------------------------------------- ------------------
+PHYLLIS VANCE                                        241000
+
+Find the top brand(s) by unit sales in the past year. 
+
+WITH TOP_BRANDS_BY_UNITS AS (
+    SELECT BRAND_NAME, COUNT(VIN)
+    FROM VEHICLE NATURAL JOIN MODEL NATURAL JOIN BRAND
+    WHERE SOLD_PRICE IS NOT NULL AND SOLD_DATE BETWEEN '01-JAN-18' AND '31-DEC-18'
+    GROUP BY BRAND_NAME
+    ORDER BY COUNT(VIN) DESC)
+SELECT * FROM TOP_BRANDS_BY_UNITS WHERE ROWNUM = 1;
+
+BRAND_NAME                               COUNT(VIN)
+---------------------------------------- ----------
+FORD                                              2
+
+In what month(s) do convertibles sell best? 
+
+WITH CONVERTIBLE_MONTH_LIST AS (
+    SELECT to_char(SOLD_DATE, 'MONTH') AS MONTH
+    FROM VEHICLE NATURAL JOIN STYLE
+    WHERE BODY_STYLE='CONVERTIBLE' AND SOLD_DATE IS NOT NULL)
+    SELECT MONTH, COUNT(MONTH) AS NUMBER_OF_CONVERTIBLES_SOLD
+    FROM CONVERTIBLE_MONTH_LIST GROUP BY MONTH
+    ORDER BY NUMBER_OF_CONVERTIBLES_SOLD DESC;
+
+MONTH     NUMBER_OF_CONVERTIBLES_SOLD
+--------- ---------------------------
+JULY                                3
+MAY                                 2
+SEPTEMBER                           1
+APRIL                               1
+JUNE                                1
+MARCH                               1
+
+Find the dealer(s) who keeps a vehicle in inventory for the longest average time.
+
+WITH DEAD_INVENTORY_AGES AS (
+    SELECT DEALER_NAME, to_date('07-NOV-19') - to_date(PRODUCTION_DATE) AS dateDiff
+    FROM VEHICLE NATURAL JOIN DEALER WHERE SOLD_DATE IS NULL AND DEALER_ID IS NOT NULL)
+SELECT DEALER_NAME, ROUND(AVG(DATEDIFF)) AS AVERAGE_DAYS_OF_UNSOLD_CAR FROM DEAD_INVENTORY_AGES
+GROUP BY DEALER_NAME ORDER BY AVERAGE_DAYS_OF_UNSOLD_CAR DESC;
+
+DEALER_NAME                              AVERAGE_DAYS_OF_UNSOLD_CAR
+---------------------------------------- --------------------------
+MICHAEL SCOTT                                                  5356
+STANLEY HUDSON                                                 4378
+JIM HALPERT                                                    3215
+DWIGHT SCHRUTE                                                 2412
+PAM BEESLY                                                     1580

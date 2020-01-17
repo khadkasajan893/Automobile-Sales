@@ -1,0 +1,38 @@
+TABLE SIZES
+--------------------------
+
+SELECT COUNT(*) FROM BRAND;
+
+  COUNT(*)
+----------
+        37
+
+SELECT COUNT(*) FROM CAR;
+
+  COUNT(*)
+----------
+        49
+
+SELECT COUNT(*) FROM CUSTOMER;
+
+  COUNT(*)
+----------
+        29
+
+SELECT COUNT(*) FROM DEALER;
+
+  COUNT(*)
+----------
+         7
+
+SELECT COUNT(*) FROM MODEL;
+
+  COUNT(*)
+----------
+       100
+
+SELECT COUNT(*) FROM STYLE;
+
+  COUNT(*)
+----------
+       106

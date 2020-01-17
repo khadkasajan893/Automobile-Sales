@@ -1,0 +1,57 @@
+DESCRIBE VEHICLE;
+
+Name            Null?    Type         
+--------------- -------- ------------ 
+VIN             NOT NULL VARCHAR2(17) 
+COLOR           NOT NULL VARCHAR2(13) 
+ENGINE          NOT NULL VARCHAR2(20) 
+TRANSMISSION    NOT NULL VARCHAR2(20) 
+PRODUCTION_DATE NOT NULL DATE         
+TAG_PRICE       NOT NULL NUMBER(9)    
+SOLD_PRICE               NUMBER(9)    
+SOLD_DATE                DATE         
+MODEL_ID        NOT NULL NUMBER(5)    
+CUSTOMER_ID              NUMBER(5)    
+DEALER_ID                NUMBER(5)  
+
+DESCRIBE BRAND;
+
+Name       Null?    Type         
+---------- -------- ------------ 
+BRAND_ID   NOT NULL NUMBER(5)    
+BRAND_NAME NOT NULL VARCHAR2(40) 
+LOGO                BLOB         
+
+DESCRIBE MODEL;
+
+Name       Null?    Type         
+---------- -------- ------------ 
+MODEL_ID   NOT NULL NUMBER(5)    
+MODEL_NAME NOT NULL VARCHAR2(30) 
+BRAND_ID   NOT NULL NUMBER(5)    
+
+DESCRIBE CUSTOMER;
+
+Name          Null?    Type         
+------------- -------- ------------ 
+CUSTOMER_ID   NOT NULL NUMBER(5)    
+CUSTOMER_NAME NOT NULL VARCHAR2(40) 
+ADDRESS       NOT NULL VARCHAR2(60) 
+PHONE         NOT NULL VARCHAR2(14) 
+GENDER                 CHAR(1)      
+ANNUAL_INCOME          NUMBER(9)    
+DEALER_ID     NOT NULL NUMBER(5)    
+
+DESCRIBE DEALER;
+
+Name        Null?    Type         
+----------- -------- ------------ 
+DEALER_ID   NOT NULL NUMBER(5)    
+DEALER_NAME NOT NULL VARCHAR2(40) 
+
+DESCRIBE STYLE;
+
+Name       Null?    Type         
+---------- -------- ------------ 
+MODEL_ID   NOT NULL NUMBER(5)    
+BODY_STYLE NOT NULL VARCHAR2(30) 
